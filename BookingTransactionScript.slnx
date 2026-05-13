@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="BookingTransactionScript.Core/BookingTransactionScript.Core.csproj" />
+  <Project Path="BookingTransactionScript.Test/BookingTransactionScript.Test.csproj" />
+  <Project Path="IntroValueObject/IntroValueObject.csproj" Id="90b70832-1a02-4b57-b5b7-c7923bbfb215" />
+</Solution>
