@@ -2,7 +2,7 @@
 
 namespace BookingValueObject.Core._3_Domain_Model
 {
-    public class OpeningHours
+    public record OpeningHours
     {
         public int OpensAtHour { get; }
         public int ClosesAtHour { get; }
