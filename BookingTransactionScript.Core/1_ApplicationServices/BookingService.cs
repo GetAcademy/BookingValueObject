@@ -24,21 +24,24 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
             return Result<Booking>.Success(newBooking);
         }
 
+        public async Task<Result<Booking>> CancelAsync(Guid bookingId, DateTime start, DateTime end)
+        {
+            // validering - kun for å optimalisere ytelse, ikke nødvendig for korrekthet
+            var result = ValidateBookingPeriod(start, end);
+            if (!result.IsSuccess) return Result<Booking>.Fail("Ugyldig start og end - sjekket ikke db");
+
+            var booking = await _bookingRepository.GetAsync(bookingId);
+            if (booking == null) return Result<Booking>.Fail("Bookingen eksisterer ikke");
+            booking.Cancel();
+            _bookingRepository.UpdateAsync(booking);
+            return Result<Booking>.Success(booking);
+        }
+
         private async Task<Result<Booking>> ValidateBooking(DateTime start, DateTime end)
         {
-            var bookingPeriodResult = BookingPeriod.Create(start, end);
-            if (!bookingPeriodResult.IsSuccess)
-            {
-                return Result<Booking>.Fail(bookingPeriodResult.ErrorMessage!);
-            }
-
-            var period = bookingPeriodResult.Value;
-            if (!period.IsWithin(_openingHours))
-            {
-                return Result<Booking>.Fail("Booking must be within opening hours.");
-            }
-
-            var bookingPeriod = bookingPeriodResult.Value!;
+            var result = ValidateBookingPeriod(start, end);
+            if (!result.IsSuccess) return Result<Booking>.Fail(result.ErrorMessage);
+            var bookingPeriod = result.Value!;
             var existingBookings = await _bookingRepository.GetAllAsync();
             var existingBookingCollection = new BookingCollection(existingBookings);
             if (existingBookingCollection.IsOverlapping(bookingPeriod))
@@ -47,6 +50,23 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
             }
 
             return Result<Booking>.Success(null);
+        }
+
+        private Result<BookingPeriod> ValidateBookingPeriod(DateTime start, DateTime end)
+        {
+            var bookingPeriodResult = BookingPeriod.Create(start, end);
+            if (!bookingPeriodResult.IsSuccess)
+            {
+                return Result<BookingPeriod>.Fail(bookingPeriodResult.ErrorMessage!);
+            }
+
+            var period = bookingPeriodResult.Value;
+            if (!period.IsWithin(_openingHours))
+            {
+                return Result<BookingPeriod>.Fail("Booking must be within opening hours.");
+            }
+
+            return Result<BookingPeriod>.Success(period);
         }
     }
 }

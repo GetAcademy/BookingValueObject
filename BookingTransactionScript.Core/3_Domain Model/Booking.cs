@@ -6,6 +6,7 @@
         public DateTime Start { get; }
         public DateTime End { get; }
         public bool IsCancelled { get; private set; }
+        public bool IsActive => !IsCancelled;
 
         public Booking(DateTime start, DateTime end)
         : this(Guid.NewGuid(), start, end)

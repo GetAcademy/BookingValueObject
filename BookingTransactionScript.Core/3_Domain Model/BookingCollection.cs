@@ -11,21 +11,22 @@
 
         public bool IsOverlapping(BookingPeriod bookingPeriod)
         {
-            return _bookings.Any(bookingPeriod.IsOverlapping);
+            bool Overlapping(Booking b) => b.IsActive && bookingPeriod.IsOverlapping(b);
+            return _bookings.Any(Overlapping);
 
             /*
-               foreach (var booking in _bookings)
-               {
-                   var overlaps = bookingPeriod.IsOverlapping(booking);
-               
-                   if (overlaps)
-                   {
-                       return true;
-                   }
-               }
-               
-               return false;             
-             */
+            foreach (var booking in _bookings)
+            {
+                var overlaps = !booking.IsCancelled && bookingPeriod.IsOverlapping(booking);
+
+                if (overlaps)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+            */
         }
     }
 }
