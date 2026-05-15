@@ -1,11 +1,13 @@
 ﻿using BookingTransactionScript.Core._2_DomainServices;
 using BookingTransactionScript.Core._3_Domain_Model;
+using BookingValueObject.Core._3_Domain_Model;
 
 namespace BookingTransactionScript.Core._1_ApplicationServices
 {
     public class BookingService
     {
         private readonly IBookingRepository _bookingRepository;
+        private readonly OpeningHours _openingHours = new(8, 16);
 
         public BookingService(IBookingRepository bookingRepository)
         {
@@ -28,6 +30,12 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
             if (!bookingPeriodResult.IsSuccess)
             {
                 return Result<Booking>.Fail(bookingPeriodResult.ErrorMessage!);
+            }
+
+            var period = bookingPeriodResult.Value;
+            if (!period.IsWithin(_openingHours))
+            {
+                return Result<Booking>.Fail("Booking must be within opening hours.");
             }
 
             var bookingPeriod = bookingPeriodResult.Value!;

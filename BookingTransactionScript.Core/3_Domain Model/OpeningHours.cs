@@ -1,0 +1,27 @@
+﻿using BookingTransactionScript.Core._3_Domain_Model;
+
+namespace BookingValueObject.Core._3_Domain_Model
+{
+    public class OpeningHours
+    {
+        public int OpensAtHour { get; }
+        public int ClosesAtHour { get; }
+
+        public OpeningHours(int opensAtHour, int closesAtHour)
+        {
+            OpensAtHour = opensAtHour;
+            ClosesAtHour = closesAtHour;
+        }
+
+        public bool Contains(BookingPeriod period)
+        {
+            return period.Start.Hour >= OpensAtHour &&
+                   period.End.Hour <= ClosesAtHour;
+        }
+
+        //public bool Contains(BookingPeriod period)
+        //{
+        //    return period.IsWithin(this);
+        //}
+    }
+}

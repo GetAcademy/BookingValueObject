@@ -1,6 +1,8 @@
-﻿namespace BookingTransactionScript.Core._3_Domain_Model
+﻿using BookingValueObject.Core._3_Domain_Model;
+
+namespace BookingTransactionScript.Core._3_Domain_Model
 {
-    public class BookingPeriod
+    public record BookingPeriod
     {
         public DateTime Start { get; }
         public DateTime End { get; }
@@ -23,14 +25,25 @@
                 return Result<BookingPeriod>.Fail("Only whole hours can be booked.");
             }
 
-            if (start.Hour < 8 || end.Hour > 16)
-            {
-                return Result<BookingPeriod>.Fail("Booking must be within opening hours.");
-            }
+            //if (start.Hour < 8 || end.Hour > 16)
+            //{
+            //    return Result<BookingPeriod>.Fail("Booking must be within opening hours.");
+            //}
 
             var duration = new BookingPeriod(start, end);
             return Result<BookingPeriod>.Success(duration);
         }
+
+        public bool IsWithin(OpeningHours openingHours)
+        {
+            return openingHours.Contains(this);
+        }
+
+        //public bool IsWithin(OpeningHours openingHours)
+        //{
+        //    return Start >= openingHours.OpensAt &&
+        //           End <= openingHours.ClosesAt;
+        //}
 
         public bool IsOverlapping(Booking booking)
         {
