@@ -40,8 +40,8 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
 
             var bookingPeriod = bookingPeriodResult.Value!;
             var existingBookings = await _bookingRepository.GetAllAsync();
-            var bookingCollection = new BookingCollection(existingBookings);
-            if (bookingCollection.IsOverlapping(bookingPeriod))
+            var existingBookingCollection = new BookingCollection(existingBookings);
+            if (existingBookingCollection.IsOverlapping(bookingPeriod))
             {
                 return Result<Booking>.Fail("Booking overlaps with an existing booking.");
             }
